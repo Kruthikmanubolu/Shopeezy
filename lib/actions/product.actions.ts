@@ -6,6 +6,7 @@ import { prisma } from "@/db/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { insertProductSchema, updateProductSchema } from "../validators";
+import { Prisma } from "@prisma/client";
 
 export async function getLatestProducts() {
   // const prisma = new PrismaClient();
@@ -34,7 +35,6 @@ export async function getProductById(productId: string) {
   return convertToPlainObj(data);
 }
 
-//Get all products
 export async function getAllProducts({
   query,
   limit = PAGE_SIZE,
@@ -52,18 +52,15 @@ export async function getAllProducts({
   rating?: string;
   sort?: string;
 }) {
-  const where = {
+  const where: Prisma.ProductWhereInput = {
     ...(query &&
       query !== "all" && {
         name: {
           contains: query,
-          mode: "insensitive" as const,
+          mode: "insensitive",
         },
       }),
-    ...(category &&
-      category !== "all" && {
-        category,
-      }),
+    ...(category && category !== "all" && { category }),
     ...(price &&
       price !== "all" && {
         price: {
@@ -79,14 +76,18 @@ export async function getAllProducts({
       }),
   };
 
-  const orderBy =
-    sort === "lowest"
-      ? { price: "asc" as const }
-      : sort === "highest"
-      ? { price: "desc" as const }
-      : sort === "rating"
-      ? { rating: "desc" as const }
-      : { createdAt: "desc" as const };
+  // Handle dynamic sort
+  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" }; // default
+
+  if (sort) {
+    const [field, direction] = sort.split("-");
+    const validFields = ["price", "rating", "createdAt"];
+    const validDirections = ["asc", "desc"];
+
+    if (validFields.includes(field) && validDirections.includes(direction)) {
+      orderBy = { [field]: direction };
+    }
+  }
 
   const data = await prisma.product.findMany({
     where,
