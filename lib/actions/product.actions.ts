@@ -52,12 +52,12 @@ export async function getAllProducts({
   rating?: string;
   sort?: string;
 }) {
-  const where: Prisma.ProductWhereInput = {
+  const where = {
     ...(query &&
       query !== "all" && {
         name: {
           contains: query,
-          mode: "insensitive",
+          mode: "insensitive" as const,
         },
       }),
     ...(category && category !== "all" && { category }),
@@ -77,7 +77,7 @@ export async function getAllProducts({
   };
 
   // Handle dynamic sort
-  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" }; // default
+  let orderBy: any = { createdAt: "desc" }; // default
 
   if (sort) {
     const [field, direction] = sort.split("-");
