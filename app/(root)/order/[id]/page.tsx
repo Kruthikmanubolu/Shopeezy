@@ -29,7 +29,7 @@ const OrderDetailsPage = async (props: {
             amount: Math.round(Number(order.totalPrice) * 100),
             currency: 'USD',
             metadata: {
-                orderId: order.id
+                orderId: order.id 
             }
         })
         client_secret = paymentIntent.client_secret
