@@ -47,20 +47,20 @@ const StripePayment = ({
         const handleSubmit = async (e: FormEvent) => {
             e.preventDefault()
 
-            if(stripe === null || elements === null || email === null) return;
+            if (stripe === null || elements === null || email === null) return;
 
             setIsLoading(true);
-            
+
             stripe.confirmPayment({
                 elements,
                 confirmParams: {
-                    return_url: `${SERVER_URL}/order/${orderId}/stripe-payment-success`
+                    return_url:`${process.env.NEXT_PUBLIC_SERVER_URL}/order/${orderId}/stripe-payment-success`
                 }
-            }).then(({error}) => {
-                if(error?.type === 'card_error' || error?.type === 'validation_error'){
+            }).then(({ error }) => {
+                if (error?.type === 'card_error' || error?.type === 'validation_error') {
                     setErrorMessage(error?.message ?? 'An unkown error occured');
 
-                }else if (error) {
+                } else if (error) {
                     setErrorMessage('An unkown error occured')
                 }
             }).finally(() => setIsLoading(false))
