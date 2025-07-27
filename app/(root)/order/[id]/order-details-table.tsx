@@ -29,15 +29,19 @@ import {
 } from "@/lib/actions/order.actions";
 import { toast } from "sonner";
 import { useTransition } from "react";
+import StripePayment from "./stripe-payment";
+
 
 const OrderDetailsTable = ({
   order,
   paypalClientId,
   isAdmin,
+  stripeClientSecret
 }: {
   order: Order;
   paypalClientId: string;
   isAdmin: boolean;
+  stripeClientSecret: string | null;
 }) => {
   const {
     shippingAddress,
@@ -119,7 +123,7 @@ const OrderDetailsTable = ({
       >{isPending ? 'Processing...' : 'Mark as Delievered'}</Button>
     );
   };
-
+  
   return (
     <>
       <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
@@ -231,6 +235,12 @@ const OrderDetailsTable = ({
                   </PayPalScriptProvider>
                 </div>
               )}
+              {/* Stripe Payment */}
+              {
+                !isPaid && paymentMethod === 'Stripe' && stripeClientSecret && (
+                  <StripePayment priceInCents={Number(order.totalPrice) * 100} orderId={order.id} clientSecret={stripeClientSecret} />
+                )
+              }
               {/* {Cash on Delievery} */}
               {isAdmin && !isPaid && paymentMethod == "CashOnDelivery" && (
                 <MarkAsPaidButton />
