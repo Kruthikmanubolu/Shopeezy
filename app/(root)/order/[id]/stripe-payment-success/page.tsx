@@ -22,7 +22,7 @@ const SuccessPage = async (props: {
     const isSuccess = paymentIntent.status === 'succeeded';
 
     if (!isSuccess) {
-        return redirect(`order/${id}`)
+        return redirect(`/order/${id}`)
     }
     return (
         <div className="max-w-4xl w-full mx-auto space-y-8">
@@ -30,7 +30,7 @@ const SuccessPage = async (props: {
                 <h1 className="h1-bold">Thank you for your purchase</h1>
                 <div>We are processing your order</div>
                 <Button asChild>
-                    <Link href={`order/${id}`}> View Order
+                    <Link href={`/order/${id}`}> View Order
                     </Link>
                 </Button>
             </div>
