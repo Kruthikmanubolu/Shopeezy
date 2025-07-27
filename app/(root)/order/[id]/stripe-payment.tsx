@@ -64,7 +64,7 @@ const StripePayment = ({
                     setErrorMessage('An unkown error occured')
                 }
             }).finally(() => setIsLoading(false))
-        }
+        } 
 
         return (
             <form className='space-y-4' onSubmit={handleSubmit}>
