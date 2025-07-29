@@ -29,21 +29,30 @@ const OrderDetailsPage = async (props: {
             amount: Math.round(Number(order.totalPrice) * 100),
             currency: 'USD',
             metadata: {
-                orderId: order.id 
+                orderId: order.id
             }
         })
         client_secret = paymentIntent.client_secret
     }
 
-    return (<OrderDetailsTable order={{
-        ...order,
-        shippingAddress: order.shippingAddress as ShippingAddress,
-        orderItems: order.orderitems
-    }}
-    stripeClientSecret = {client_secret}
-     paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
+    return (<OrderDetailsTable
+        order={{
+            ...order,
+            shippingAddress: order.shippingAddress as ShippingAddress,
+            orderItems: order.orderitems,
+            paymentResult: order.paymentResult as {
+                id: string;
+                status: string;
+                email_address: string;
+                price_Paid: string;
+            },
+        }}
+        stripeClientSecret={client_secret}
+        paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
         isAdmin={session?.user?.role === 'admin' || false}
-    />);
+    />
+
+    );
 }
 
 export default OrderDetailsPage;
